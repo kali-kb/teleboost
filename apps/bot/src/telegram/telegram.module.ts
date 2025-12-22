@@ -1,0 +1,9 @@
+import { Module } from '@nestjs/common';
+import { TelegramService } from './telegram.service';
+import { TelegramUpdate } from './telegram.update';
+
+@Module({
+    providers: [TelegramService, TelegramUpdate],
+    exports: [TelegramService],
+})
+export class TelegramModule { }
