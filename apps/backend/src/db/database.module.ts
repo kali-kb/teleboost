@@ -2,7 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { users } from '@teleboost/database';
+import * as schema from '@teleboost/database';
 
 export const DRIZZLE = 'DRIZZLE';
 
@@ -20,10 +20,11 @@ export const DRIZZLE = 'DRIZZLE';
                 const pool = new Pool({
                     connectionString,
                 });
-                return drizzle(pool, { schema: { users } });
+                return drizzle(pool, { schema });
             },
         },
     ],
+
     exports: [DRIZZLE],
 })
 export class DatabaseModule { }

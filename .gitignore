@@ -143,3 +143,4 @@ dist-ssr/
 # NestJS build output
 dist/
 node_modules/
+*.dbml
