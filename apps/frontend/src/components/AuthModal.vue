@@ -39,7 +39,6 @@ const errors = reactive({
 });
 
 // Computed helpers
-const authMode = computed(() => currentStep.value === 'signin' ? 'signin' : 'signup');
 const isSignupFlow = computed(() => ['signup', 'profile-type', 'company-details', 'complete'].includes(currentStep.value));
 
 const validateEmail = (email: string) => {
@@ -142,8 +141,9 @@ const handleAuth = async () => {
     // Move to profile type selection
     currentStep.value = 'profile-type';
   } else {
-    // Sign in complete
+    // Sign in complete - redirect to dashboard
     emit('authComplete', { type: 'signin', email: form.email });
+    window.location.hash = '#/dashboard';
     emit('close');
   }
 };
@@ -179,7 +179,7 @@ const handleCompanySubmit = async () => {
 const completeSignup = () => {
   currentStep.value = 'complete';
   
-  // Auto-close after 2 seconds
+  // Auto-redirect to dashboard after success animation
   setTimeout(() => {
     emit('authComplete', { 
       type: 'signup', 
@@ -187,6 +187,8 @@ const completeSignup = () => {
       advertiserType: selectedAdvertiserType.value,
       company: selectedAdvertiserType.value === 'ENTERPRISE' ? companyForm : null
     });
+    // Navigate to dashboard
+    window.location.hash = '#/dashboard';
     resetAndClose();
   }, 2500);
 };
@@ -369,7 +371,7 @@ watch(() => props.isOpen, (newVal) => {
                   </p>
 
                   <button type="submit" :disabled="isLoading"
-                    class="w-full h-12 bg-primary hover:bg-primary-hover disabled:bg-slate-300 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 group mt-2">
+                    class="w-full h-12 bg-primary hover:bg-primary-hover disabled:bg-slate-300 text-white font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 group mt-2">
                     <span v-if="isLoading" class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     <span v-else>{{ currentStep === 'signin' ? 'Sign In' : 'Continue' }}</span>
                     <span v-if="!isLoading" class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -482,7 +484,7 @@ watch(() => props.isOpen, (newVal) => {
               </div>
 
               <button type="submit" :disabled="isLoading"
-                class="w-full h-12 bg-primary hover:bg-primary-hover disabled:bg-slate-300 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 group mt-4">
+                class="w-full h-12 bg-primary hover:bg-primary-hover disabled:bg-slate-300 text-white font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 group mt-4">
                 <span v-if="isLoading" class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                 <span v-else>Complete Setup</span>
                 <span v-if="!isLoading" class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">check</span>

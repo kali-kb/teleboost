@@ -92,7 +92,7 @@ const content = computed(() => {
             <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#stats">Stats</a>
             <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#contact">Contact</a>
           </nav>
-          <button @click="handleCTA" class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary hover:bg-primary-hover text-white text-sm font-bold transition-colors duration-200 shadow-md shadow-emerald-200">
+          <button @click="handleCTA" class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary hover:bg-primary-hover text-white text-sm font-bold transition-colors duration-200">
             <svg v-if="currentRole === 'channel-owners'" class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
             {{ currentRole === 'advertisers' ? 'Launch Campaign' : 'Join Network' }}
           </button>
@@ -122,7 +122,7 @@ const content = computed(() => {
                 </p>
               </div>
               <div class="flex flex-wrap gap-4 mt-2">
-                <button @click="handleCTA" class="flex min-w-[140px] cursor-pointer items-center justify-center gap-3 rounded-lg h-12 px-6 bg-primary hover:bg-primary-hover text-white text-base font-bold transition-all shadow-lg shadow-emerald-200 hover:-translate-y-0.5">
+                <button @click="handleCTA" class="flex min-w-[140px] cursor-pointer items-center justify-center gap-3 rounded-lg h-12 px-6 bg-primary hover:bg-primary-hover text-white text-base font-bold transition-all hover:-translate-y-0.5">
                   <svg v-if="currentRole === 'channel-owners'" class="size-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                   {{ content.cta }}
                 </button>
@@ -257,7 +257,7 @@ const content = computed(() => {
           <h2 class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Ready to join the Ethiopian ad revolution?</h2>
           <p class="text-slate-500 text-xl max-w-xl">Whether you want to grow your business or monetize your channel, TeleAds is built for you.</p>
           <div class="flex flex-wrap justify-center gap-4 mt-6">
-            <button @click="handleCTA" class="flex min-w-[200px] cursor-pointer items-center justify-center gap-3 rounded-xl h-14 px-8 bg-primary hover:bg-primary-hover text-white text-lg font-bold transition-all shadow-lg shadow-emerald-200 hover:shadow-emerald-300 hover:-translate-y-1">
+            <button @click="handleCTA" class="flex min-w-[200px] cursor-pointer items-center justify-center gap-3 rounded-xl h-14 px-8 bg-primary hover:bg-primary-hover text-white text-lg font-bold transition-all hover:-translate-y-1">
               <svg v-if="currentRole === 'channel-owners'" class="size-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               {{ currentRole === 'advertisers' ? 'Start Advertising' : 'Monetize Channel' }}
             </button>
