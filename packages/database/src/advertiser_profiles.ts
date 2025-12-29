@@ -9,6 +9,8 @@ export const advertiser_profiles = pgTable("advertiser_profile", {
     type: advertiser_type_enum("type").notNull(),
     company_name: text("company_name"),
     company_registration_number: text("company_registration_number"),
+    // tin_number: text("tin_number"),
+    // role: text("role"),
     website: text("website"),
     verified: boolean("verified").default(false),
     created_at: timestamp("created_at").defaultNow().notNull(),
