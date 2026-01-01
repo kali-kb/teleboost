@@ -258,7 +258,7 @@ watch(() => props.isOpen, (newVal) => {
                   {{ currentStep === 'signin' ? 'Welcome Back' : 'Create Account' }}
                 </h2>
                 <p class="text-slate-500 mt-1 text-sm leading-relaxed">
-                  {{ currentStep === 'signin' ? 'Advertising dashboard for Ethiopian markets' : 'Join the 500+ businesses scaling with TeleAds' }}
+                  {{ currentStep === 'signin' ? 'Advertising dashboard for Ethiopian markets' : 'Join the 500+ businesses scaling with teleboost' }}
                 </p>
               </div>
               <button @click="resetAndClose" class="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 transition-all hover:rotate-90">
@@ -405,7 +405,7 @@ watch(() => props.isOpen, (newVal) => {
                 <span class="material-symbols-outlined text-3xl text-primary">account_circle</span>
               </div>
               <h2 class="text-2xl font-black text-slate-900 tracking-tight">Choose Your Profile</h2>
-              <p class="text-slate-500 mt-2 text-sm">How will you be using TeleAds?</p>
+              <p class="text-slate-500 mt-2 text-sm">How will you be using teleboost?</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

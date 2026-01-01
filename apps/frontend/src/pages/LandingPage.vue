@@ -27,7 +27,7 @@ const content = computed(() => {
       cta: "Start Advertising",
       ctaLink: "#", // Placeholder for advertiser flow
       image: "/images/hero_mockup.png",
-      featuresTitle: "Why Advertise with TeleAds?",
+      featuresTitle: "Why Advertise with teleboost?",
       // ... (rest of features)
       features: [
         { title: 'Target Ethiopian Channels', desc: 'Reach local audiences precisely where they hang out most - in their favorite Telegram groups and channels.', icon: 'location_on' },
@@ -65,12 +65,8 @@ const content = computed(() => {
     <header class="sticky top-0 z-50 w-full border-b border-border-light bg-white/90 backdrop-blur-md px-4 sm:px-10 py-3">
       <div class="mx-auto flex max-w-7xl items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="size-8 text-primary">
-            <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
-            </svg>
-          </div>
-          <h2 class="text-text-main text-xl font-bold leading-tight tracking-tight">TeleAds</h2>
+          <img src="/images/teleboost.png" alt="teleboost logo" class="size-8 object-contain" />
+          <h2 class="text-text-main text-xl font-bold leading-tight tracking-tight">teleboost</h2>
         </div>
         <div class="hidden lg:flex items-center bg-slate-100 rounded-full p-1 border border-slate-200">
           <button @click="currentRole = 'advertisers'" 
@@ -194,7 +190,7 @@ const content = computed(() => {
             <div class="w-full md:w-1/2 flex flex-col gap-8">
               <div>
                 <h2 class="text-3xl font-bold text-slate-900">Calculate Your Reach</h2>
-                <p class="text-slate-500 mt-2">See how far your budget can take you with TeleAds' competitive CPM rates.</p>
+                <p class="text-slate-500 mt-2">See how far your budget can take you with teleboost's competitive CPM rates.</p>
               </div>
               <div class="flex flex-col gap-4">
                 <div class="flex justify-between text-sm font-bold">
@@ -255,7 +251,7 @@ const content = computed(() => {
       <section class="w-full px-4 py-24 text-center bg-white">
         <div class="max-w-4xl mx-auto flex flex-col items-center gap-6">
           <h2 class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Ready to join the Ethiopian ad revolution?</h2>
-          <p class="text-slate-500 text-xl max-w-xl">Whether you want to grow your business or monetize your channel, TeleAds is built for you.</p>
+          <p class="text-slate-500 text-xl max-w-xl">Whether you want to grow your business or monetize your channel, teleboost is built for you.</p>
           <div class="flex flex-wrap justify-center gap-4 mt-6">
             <button @click="handleCTA" class="flex min-w-[200px] cursor-pointer items-center justify-center gap-3 rounded-xl h-14 px-8 bg-primary hover:bg-primary-hover text-white text-lg font-bold transition-all hover:-translate-y-1">
               <svg v-if="currentRole === 'channel-owners'" class="size-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
@@ -274,12 +270,8 @@ const content = computed(() => {
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
         <div class="col-span-1 md:col-span-1 flex flex-col gap-6">
           <div class="flex items-center gap-2 text-white">
-            <div class="size-8 text-primary">
-              <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor"></path>
-              </svg>
-            </div>
-            <h2 class="text-white text-xl font-bold">TeleAds</h2>
+            <img src="/images/teleboost.png" alt="teleboost logo" class="size-8 object-contain" />
+            <h2 class="text-white text-xl font-bold">teleboost</h2>
           </div>
           <p class="text-slate-400 text-sm leading-relaxed">The leading advertising platform for the Telegram ecosystem in Ethiopia. Connecting brands with local communities.</p>
         </div>
@@ -297,7 +289,7 @@ const content = computed(() => {
         </div>
       </div>
       <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-800 flex flex-col sm:row justify-between items-center gap-6">
-        <p class="text-slate-500 text-sm">© {{ new Date().getFullYear() }} TeleAds Ethiopia. Built for the local market.</p>
+        <p class="text-slate-500 text-sm">© {{ new Date().getFullYear() }} teleboost Ethiopia. Built for the local market.</p>
         <div class="flex gap-6">
           <a class="text-slate-400 hover:text-white transition-colors" href="#">Telegram</a>
           <a class="text-slate-400 hover:text-white transition-colors" href="#">Twitter</a>
