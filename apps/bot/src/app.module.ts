@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { TelegramModule } from './telegram/telegram.module';
+import { session } from 'telegraf';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TelegramModule } from './telegram/telegram.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         token: config.get<string>('BOT_TOKEN')!,
+        middlewares: [session()],
       }),
     }),
     TelegramModule,

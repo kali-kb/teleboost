@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class TelegramService {
     getWelcomeMessage(): string {
-        return 'Welcome to Teleboost! 🚀\nYour premium Telegram assistant is ready.';
+        return `🚀 **Welcome to Teleboost Monetization!**\n\n` +
+            `To join our network, your channel must meet these minimum requirements:\n` +
+            `• 👥 **500+ Subscribers**\n` +
+            `• 📈 **15% View-to-Subscriber Ratio**\n\n` +
+            `Ready to start? Click the button below!`;
     }
 
     getHelpMessage(): string {

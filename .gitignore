@@ -144,3 +144,6 @@ dist-ssr/
 dist/
 node_modules/
 *.dbml
+
+
+registration_flow.md
