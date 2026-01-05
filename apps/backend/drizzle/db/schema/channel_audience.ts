@@ -1,9 +1,9 @@
-import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
-import { telegram_channels } from "./telegram_channels.js";
+import { relations } from 'drizzle-orm';
+import { pgTable, text, timestamp, boolean, uuid } from 'drizzle-orm/pg-core';
+import { telegram_channels } from './telegram_channels';
 
-export const channel_audience = pgTable("channel_audience", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const channel_audience = pgTable('channel_audience', {
+    id: uuid('id').primaryKey().defaultRandom(),
     channel_id: uuid("channel_id").notNull().references(() => telegram_channels.id),
     primary_country: text("primary_country"),
     primary_city: text("primary_city"),

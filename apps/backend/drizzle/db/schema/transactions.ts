@@ -1,9 +1,9 @@
-import { pgTable, uuid, decimal, timestamp, varchar } from "drizzle-orm/pg-core";
-import { wallets } from "./wallets.js";
-import { transaction_type } from "./enums/transaction_type.js";
-import { relations } from "drizzle-orm";
+import { pgTable, uuid, decimal, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { wallets } from './wallets';
+import { transaction_type } from './enums/transaction_type';
+import { relations } from 'drizzle-orm';
 
-export const transactions = pgTable("transactions", {
+export const transactions = pgTable('transactions', {
     id: uuid("id").primaryKey().defaultRandom(),
     wallet_id: uuid("wallet_id").notNull().references(() => wallets.id),
     type: transaction_type("type").notNull(),

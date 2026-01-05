@@ -1,9 +1,102 @@
 {
-  "id": "cfd72d74-a278-4bad-9542-90d418b51c37",
+  "id": "6e10459b-5b79-4816-b87e-cf1663de1b46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.telegram_identity": {
+      "name": "telegram_identity",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "telegram_user_id": {
+          "name": "telegram_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "telegram_identity_telegram_user_id_unique": {
+          "name": "telegram_identity_telegram_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "telegram_user_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payment_methods": {
+      "name": "payment_methods",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.account": {
       "name": "account",
       "schema": "",
@@ -384,6 +477,222 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.wallets": {
+      "name": "wallets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_type": {
+          "name": "owner_type",
+          "type": "wallet_owner_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_user_id": {
+          "name": "owner_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_telegram_id": {
+          "name": "owner_telegram_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "balance": {
+          "name": "balance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "locked_balance": {
+          "name": "locked_balance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ETB'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "wallets_owner_user_id_user_id_fk": {
+          "name": "wallets_owner_user_id_user_id_fk",
+          "tableFrom": "wallets",
+          "tableTo": "user",
+          "columnsFrom": [
+            "owner_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "wallets_owner_telegram_id_telegram_identity_id_fk": {
+          "name": "wallets_owner_telegram_id_telegram_identity_id_fk",
+          "tableFrom": "wallets",
+          "tableTo": "telegram_identity",
+          "columnsFrom": [
+            "owner_telegram_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.telegram_channel": {
+      "name": "telegram_channel",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "telegram_channel_id": {
+          "name": "telegram_channel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subscribers": {
+          "name": "subscribers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_views": {
+          "name": "avg_views",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_per_post": {
+          "name": "price_per_post",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verification_method": {
+          "name": "verification_method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trust_score": {
+          "name": "trust_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "telegram_channel_owner_id_telegram_identity_id_fk": {
+          "name": "telegram_channel_owner_id_telegram_identity_id_fk",
+          "tableFrom": "telegram_channel",
+          "tableTo": "telegram_identity",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "telegram_channel_telegram_channel_id_unique": {
+          "name": "telegram_channel_telegram_channel_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "telegram_channel_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.advertiser_profile": {
       "name": "advertiser_profile",
       "schema": "",
@@ -456,6 +765,360 @@
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.admin_profiles": {
+      "name": "admin_profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_root": {
+          "name": "is_root",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_profiles_user_id_user_id_fk": {
+          "name": "admin_profiles_user_id_user_id_fk",
+          "tableFrom": "admin_profiles",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_profiles_created_by_user_id_fk": {
+          "name": "admin_profiles_created_by_user_id_fk",
+          "tableFrom": "admin_profiles",
+          "tableTo": "user",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.admin_logs": {
+      "name": "admin_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "admin_user_id": {
+          "name": "admin_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_type": {
+          "name": "target_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_id": {
+          "name": "target_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admin_logs_admin_user_id_user_id_fk": {
+          "name": "admin_logs_admin_user_id_user_id_fk",
+          "tableFrom": "admin_logs",
+          "tableTo": "user",
+          "columnsFrom": [
+            "admin_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.channel_audience": {
+      "name": "channel_audience",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "primary_country": {
+          "name": "primary_country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_city": {
+          "name": "primary_city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "niche": {
+          "name": "niche",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_local": {
+          "name": "is_local",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "channel_audience_channel_id_telegram_channel_id_fk": {
+          "name": "channel_audience_channel_id_telegram_channel_id_fk",
+          "tableFrom": "channel_audience",
+          "tableTo": "telegram_channel",
+          "columnsFrom": [
+            "channel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.channel_stats_history": {
+      "name": "channel_stats_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscribers": {
+          "name": "subscribers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_views": {
+          "name": "avg_views",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "captured_at": {
+          "name": "captured_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "channel_stats_history_channel_id_telegram_channel_id_fk": {
+          "name": "channel_stats_history_channel_id_telegram_channel_id_fk",
+          "tableFrom": "channel_stats_history",
+          "tableTo": "telegram_channel",
+          "columnsFrom": [
+            "channel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.campaign": {
+      "name": "campaign",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "advertiser_id": {
+          "name": "advertiser_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "marketing_copy": {
+          "name": "marketing_copy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "campaign_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "campaign_advertiser_id_user_id_fk": {
+          "name": "campaign_advertiser_id_user_id_fk",
+          "tableFrom": "campaign",
+          "tableTo": "user",
+          "columnsFrom": [
+            "advertiser_id"
           ],
           "columnsTo": [
             "id"
@@ -638,222 +1301,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.campaign": {
-      "name": "campaign",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "advertiser_id": {
-          "name": "advertiser_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "marketing_copy": {
-          "name": "marketing_copy",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "metadata": {
-          "name": "metadata",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "campaign_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "campaign_advertiser_id_user_id_fk": {
-          "name": "campaign_advertiser_id_user_id_fk",
-          "tableFrom": "campaign",
-          "tableTo": "user",
-          "columnsFrom": [
-            "advertiser_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.channel_audience": {
-      "name": "channel_audience",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "channel_id": {
-          "name": "channel_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "primary_country": {
-          "name": "primary_country",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "primary_city": {
-          "name": "primary_city",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "language": {
-          "name": "language",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "niche": {
-          "name": "niche",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_local": {
-          "name": "is_local",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "channel_audience_channel_id_telegram_channel_id_fk": {
-          "name": "channel_audience_channel_id_telegram_channel_id_fk",
-          "tableFrom": "channel_audience",
-          "tableTo": "telegram_channel",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.channel_stats_history": {
-      "name": "channel_stats_history",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "channel_id": {
-          "name": "channel_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "subscribers": {
-          "name": "subscribers",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "avg_views": {
-          "name": "avg_views",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "captured_at": {
-          "name": "captured_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "channel_stats_history_channel_id_telegram_channel_id_fk": {
-          "name": "channel_stats_history_channel_id_telegram_channel_id_fk",
-          "tableFrom": "channel_stats_history",
-          "tableTo": "telegram_channel",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.payments": {
       "name": "payments",
       "schema": "",
@@ -951,452 +1398,6 @@
           "tableTo": "telegram_identity",
           "columnsFrom": [
             "channel_owner_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.telegram_channel": {
-      "name": "telegram_channel",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "owner_id": {
-          "name": "owner_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "telegram_channel_id": {
-          "name": "telegram_channel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "username": {
-          "name": "username",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "category": {
-          "name": "category",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "subscribers": {
-          "name": "subscribers",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "avg_views": {
-          "name": "avg_views",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "price_per_post": {
-          "name": "price_per_post",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "verified": {
-          "name": "verified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "verification_method": {
-          "name": "verification_method",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "trust_score": {
-          "name": "trust_score",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "telegram_channel_owner_id_telegram_identity_id_fk": {
-          "name": "telegram_channel_owner_id_telegram_identity_id_fk",
-          "tableFrom": "telegram_channel",
-          "tableTo": "telegram_identity",
-          "columnsFrom": [
-            "owner_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "telegram_channel_telegram_channel_id_unique": {
-          "name": "telegram_channel_telegram_channel_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "telegram_channel_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.telegram_identity": {
-      "name": "telegram_identity",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "telegram_user_id": {
-          "name": "telegram_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "username": {
-          "name": "username",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "first_name": {
-          "name": "first_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "telegram_identity_telegram_user_id_unique": {
-          "name": "telegram_identity_telegram_user_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "telegram_user_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.wallets": {
-      "name": "wallets",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "owner_type": {
-          "name": "owner_type",
-          "type": "wallet_owner_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "owner_user_id": {
-          "name": "owner_user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "owner_telegram_id": {
-          "name": "owner_telegram_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "balance": {
-          "name": "balance",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'0'"
-        },
-        "locked_balance": {
-          "name": "locked_balance",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'0'"
-        },
-        "currency": {
-          "name": "currency",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'ETB'"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "wallets_owner_user_id_user_id_fk": {
-          "name": "wallets_owner_user_id_user_id_fk",
-          "tableFrom": "wallets",
-          "tableTo": "user",
-          "columnsFrom": [
-            "owner_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "wallets_owner_telegram_id_telegram_identity_id_fk": {
-          "name": "wallets_owner_telegram_id_telegram_identity_id_fk",
-          "tableFrom": "wallets",
-          "tableTo": "telegram_identity",
-          "columnsFrom": [
-            "owner_telegram_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.transactions": {
-      "name": "transactions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "wallet_id": {
-          "name": "wallet_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type": {
-          "name": "type",
-          "type": "transaction_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount": {
-          "name": "amount",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "reference_type": {
-          "name": "reference_type",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "reference_id": {
-          "name": "reference_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "transactions_wallet_id_wallets_id_fk": {
-          "name": "transactions_wallet_id_wallets_id_fk",
-          "tableFrom": "transactions",
-          "tableTo": "wallets",
-          "columnsFrom": [
-            "wallet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.payment_methods": {
-      "name": "payment_methods",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "enabled": {
-          "name": "enabled",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.payment_receipts": {
-      "name": "payment_receipts",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "payment_id": {
-          "name": "payment_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "receipt_reference": {
-          "name": "receipt_reference",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "provider": {
-          "name": "provider",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "verified": {
-          "name": "verified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "verified_at": {
-          "name": "verified_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "payment_receipts_payment_id_payments_id_fk": {
-          "name": "payment_receipts_payment_id_payments_id_fk",
-          "tableFrom": "payment_receipts",
-          "tableTo": "payments",
-          "columnsFrom": [
-            "payment_id"
           ],
           "columnsTo": [
             "id"
@@ -1522,8 +1523,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.admin_profiles": {
-      "name": "admin_profiles",
+    "public.payment_receipts": {
+      "name": "payment_receipts",
       "schema": "",
       "columns": {
         "id": {
@@ -1533,54 +1534,46 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "user_id": {
-          "name": "user_id",
+        "payment_id": {
+          "name": "payment_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "is_root": {
-          "name": "is_root",
+        "receipt_reference": {
+          "name": "receipt_reference",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified": {
+          "name": "verified",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "default": false
         },
-        "created_by": {
-          "name": "created_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
+        "verified_at": {
+          "name": "verified_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "admin_profiles_user_id_user_id_fk": {
-          "name": "admin_profiles_user_id_user_id_fk",
-          "tableFrom": "admin_profiles",
-          "tableTo": "user",
+        "payment_receipts_payment_id_payments_id_fk": {
+          "name": "payment_receipts_payment_id_payments_id_fk",
+          "tableFrom": "payment_receipts",
+          "tableTo": "payments",
           "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "admin_profiles_created_by_user_id_fk": {
-          "name": "admin_profiles_created_by_user_id_fk",
-          "tableFrom": "admin_profiles",
-          "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
+            "payment_id"
           ],
           "columnsTo": [
             "id"
@@ -1595,8 +1588,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.admin_logs": {
-      "name": "admin_logs",
+    "public.transactions": {
+      "name": "transactions",
       "schema": "",
       "columns": {
         "id": {
@@ -1606,26 +1599,33 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "admin_user_id": {
-          "name": "admin_user_id",
+        "wallet_id": {
+          "name": "wallet_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "action": {
-          "name": "action",
-          "type": "varchar",
+        "type": {
+          "name": "type",
+          "type": "transaction_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "target_type": {
-          "name": "target_type",
+        "amount": {
+          "name": "amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference_type": {
+          "name": "reference_type",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "target_id": {
-          "name": "target_id",
+        "reference_id": {
+          "name": "reference_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
@@ -1640,12 +1640,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "admin_logs_admin_user_id_user_id_fk": {
-          "name": "admin_logs_admin_user_id_user_id_fk",
-          "tableFrom": "admin_logs",
-          "tableTo": "user",
+        "transactions_wallet_id_wallets_id_fk": {
+          "name": "transactions_wallet_id_wallets_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "wallets",
           "columnsFrom": [
-            "admin_user_id"
+            "wallet_id"
           ],
           "columnsTo": [
             "id"

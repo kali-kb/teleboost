@@ -1,9 +1,9 @@
-import { pgTable, uuid, varchar, boolean, timestamp } from "drizzle-orm/pg-core";
-import { payments } from "./payments.js";
-import { relations } from "drizzle-orm";
+import { pgTable, uuid, varchar, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { payments } from './payments';
+import { relations } from 'drizzle-orm';
 
-export const payment_receipts = pgTable("payment_receipts", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const payment_receipts = pgTable('payment_receipts', {
+    id: uuid('id').primaryKey().defaultRandom(),
     payment_id: uuid("payment_id").notNull().references(() => payments.id),
     receipt_reference: varchar("receipt_reference"),
     provider: varchar("provider"),

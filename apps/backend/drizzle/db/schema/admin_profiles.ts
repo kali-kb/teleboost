@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, boolean, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./auth.js";
+import { users } from "./auth";
 import { relations } from "drizzle-orm";
 
 export const admin_profiles = pgTable("admin_profiles", {
