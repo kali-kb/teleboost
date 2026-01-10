@@ -1,3 +1,7 @@
+import { join } from 'path';
+import { config } from 'dotenv';
+config({ path: join(process.cwd(), '.env') });
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -5,19 +9,25 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '../drizzle/db/database.module';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from 'lib/auth';
+import { UserModule } from './user/user.module';
+// import { DebugController } from './debug/debug.controller';
+import { TelegramIdentitiesModule } from './telegram-identities/telegram-identities.module';
+import { TelegramChannelsModule } from './telegram-channels/telegram-channels.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['../../.env', '.env'],
     }),
     DatabaseModule,
     AuthModule.forRoot({
       auth,
     }),
+    UserModule,
+    TelegramIdentitiesModule,
+    TelegramChannelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

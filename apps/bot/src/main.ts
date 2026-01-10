@@ -1,3 +1,7 @@
+import { join } from 'path';
+import { config } from 'dotenv';
+config({ path: join(process.cwd(), '.env') });
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';

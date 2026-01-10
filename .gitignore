@@ -145,7 +145,10 @@ dist/
 node_modules/
 *.dbml
 
+docker-compose.yml
 
 registration_flow.md
 
 guideline_doc.md
+
+opencode.jsonc

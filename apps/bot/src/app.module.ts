@@ -1,16 +1,20 @@
+import { join } from 'path';
+import { config } from 'dotenv';
+config({ path: join(process.cwd(), '.env') });
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { TelegramModule } from './telegram/telegram.module';
+import { ApiClientModule } from './api/api-client.module';
 import { session } from 'telegraf';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['../../.env', '.env'],
     }),
     TelegrafModule.forRootAsync({
       inject: [ConfigService],
@@ -20,8 +24,9 @@ import { session } from 'telegraf';
       }),
     }),
     TelegramModule,
+    ApiClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
