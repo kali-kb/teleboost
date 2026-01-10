@@ -3,6 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import * as schema from '../drizzle/db/schema';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+import crypto from 'node:crypto';
 
 console.log(`database url: ${process.env.DATABASE_URL}`)
 
@@ -40,5 +41,8 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
+  },
+  advanced: {
+    generateId: () => crypto.randomUUID(),
   },
 }) as unknown as ReturnType<typeof betterAuth>;
