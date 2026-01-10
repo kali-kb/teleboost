@@ -1,22 +1,25 @@
 import { Wizard, WizardStep, Ctx, Message, On, Action } from 'nestjs-telegraf';
 import { Scenes, Markup } from 'telegraf';
-import { TelegramService } from './telegram.service';
+import { TelegramService } from '../telegram.service';
+import { Injectable } from '@nestjs/common';
 
 export const REGISTER_CHANNEL_WIZARD_ID = 'REGISTER_CHANNEL_WIZARD_ID';
 
+@Injectable()
 @Wizard(REGISTER_CHANNEL_WIZARD_ID)
 export class RegisterChannelWizard {
   private uiTimers = new Map<number, NodeJS.Timeout>();
 
-  constructor(private readonly telegramService: TelegramService) {}
+  constructor(private readonly telegramService: TelegramService) { }
 
   @WizardStep(1)
   async step1(@Ctx() ctx: Scenes.WizardContext) {
+    console.log('--- RegisterChannelWizard Step 1 ---');
     const state = ctx.wizard.state as any;
 
     await ctx.reply(
       `🔍 **Checking Monetization Status**\n\n` +
-        `Verifying your channel meets the minimum requirements...`,
+      `Verifying your channel meets the minimum requirements...`,
       { parse_mode: 'Markdown' },
     );
 
@@ -29,8 +32,8 @@ export class RegisterChannelWizard {
       if (memberCount < 1) {
         await ctx.reply(
           `❌ **Requirement Not Met**\n\n` +
-            `Your channel has **${memberCount}** subscribers. You need at least **500** to join Teleboost. ` +
-            `Please come back once your channel grows!`,
+          `Your channel has **${memberCount}** subscribers. You need at least **500** to join Teleboost. ` +
+          `Please come back once your channel grows!`,
           { parse_mode: 'Markdown' },
         );
         await ctx.scene.leave();
@@ -39,13 +42,13 @@ export class RegisterChannelWizard {
 
       await ctx.reply(
         `✅ Subscriber count verified: **${memberCount}**\n\n` +
-          `Now, what is the **category** of your channel?`,
+        `Now, what is the **category** of your channel?`,
         {
           parse_mode: 'Markdown',
           ...Markup.keyboard([
             ['Crypto', 'News', 'Lifestyle'],
             ['Entertainment', 'Technology', 'Business'],
-            ['Education', 'Sports', 'Health'],
+            ['Education', 'Sports', 'Finance'],
             ['Fashion', 'Food'],
             ['Religion', 'Music', 'Health'],
             ['Travel', 'Gaming', 'Other'],
@@ -87,7 +90,7 @@ export class RegisterChannelWizard {
     const message = ctx.message as any;
     const state = ctx.wizard.state as any;
 
-    if (!message.forward_from_chat) return;
+    if (!message?.forward_from_chat) return;
 
     // Validation: Must be from the correct channel
     if (String(message.forward_from_chat.id) !== String(state.channelId)) {
@@ -241,9 +244,9 @@ export class RegisterChannelWizard {
       await ctx.answerCbQuery();
       await ctx.reply(
         `❌ **Verification Failed**\n\n` +
-          `Your average views (**${avg}**) relative to subscribers (**${subscribers}**) is **${percentage}%**.\n\n` +
-          `Teleboost requires a minimum of **15%** engagement to monetize. ` +
-          `Please try again once your engagement improves.`,
+        `Your average views (**${avg}**) relative to subscribers (**${subscribers}**) is **${percentage}%**.\n\n` +
+        `Teleboost requires a minimum of **15%** engagement to monetize. ` +
+        `Please try again once your engagement improves.`,
         { parse_mode: 'Markdown' },
       );
       await ctx.scene.leave();
@@ -257,8 +260,8 @@ export class RegisterChannelWizard {
     await ctx.answerCbQuery();
     await ctx.reply(
       `Verification complete! ✅\n` +
-        `Average views: **${avg.toLocaleString()}** (${(engagementRatio * 100).toFixed(1)}% engagement).\n\n` +
-        `What is the **primary country** of your audience? (Optional)`,
+      `Average views: **${avg.toLocaleString()}** (${(engagementRatio * 100).toFixed(1)}% engagement).\n\n` +
+      `What is the **primary country** of your audience? (Optional)`,
       {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
@@ -280,7 +283,7 @@ export class RegisterChannelWizard {
 
     await ctx.reply(
       `Primary country set to: **${country || 'Skipped'}**.\n\n` +
-        `What is the **primary city** of your audience? (Optional)`,
+      `What is the **primary city** of your audience? (Optional)`,
       {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
@@ -308,7 +311,7 @@ export class RegisterChannelWizard {
 
     await ctx.reply(
       `Primary city set to: **${city || 'Skipped'}**.\n\n` +
-        `What is the **primary language** of your audience? (e.g. Amharic, English) (Optional)`,
+      `What is the **primary language** of your audience? (e.g. Amharic, English) (Optional)`,
       {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
@@ -336,7 +339,7 @@ export class RegisterChannelWizard {
 
     await ctx.reply(
       `Language set to: **${language || 'Skipped'}**.\n\n` +
-        `What is the **audience niche**? (e.g. High-income professionals, Students) (Optional)`,
+      `What is the **audience niche**? (e.g. High-income professionals, Students) (Optional)`,
       {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
@@ -417,7 +420,7 @@ export class RegisterChannelWizard {
 
     await ctx.reply(
       `Please confirm the registration details:\n\n${details}\n` +
-        `Do you want to register this channel?`,
+      `Do you want to register this channel?`,
       {
         parse_mode: 'Markdown',
         ...Markup.inlineKeyboard([
@@ -457,6 +460,9 @@ export class RegisterChannelWizard {
       await ctx.answerCbQuery();
       await ctx.reply(
         `Channel registered successfully! 🎉\n\nChannel ID: ${channel.id}\n\nWelcome to Teleboost.`,
+        Markup.keyboard([
+          ['📢 Register Channel', '⚙️ Manage My Channels'],
+        ]).resize(),
       );
       await ctx.scene.leave();
     } catch (error) {
@@ -470,7 +476,12 @@ export class RegisterChannelWizard {
   @Action('cancel_reg')
   async onCancel(@Ctx() ctx: Scenes.WizardContext) {
     await ctx.answerCbQuery();
-    await ctx.reply('Registration cancelled.');
+    await ctx.reply(
+      'Registration cancelled.',
+      Markup.keyboard([
+        ['📢 Register Channel', '⚙️ Manage My Channels'],
+      ]).resize(),
+    );
     await ctx.scene.leave();
   }
 }

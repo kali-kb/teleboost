@@ -4,7 +4,7 @@ import { telegram_channels } from './telegram_channels';
 
 export const channel_audience = pgTable('channel_audience', {
     id: uuid('id').primaryKey().defaultRandom(),
-    channel_id: uuid("channel_id").notNull().references(() => telegram_channels.id),
+    channel_id: uuid("channel_id").notNull().references(() => telegram_channels.id, { onDelete: 'cascade' }),
     primary_country: text("primary_country"),
     primary_city: text("primary_city"),
     language: text("language"),

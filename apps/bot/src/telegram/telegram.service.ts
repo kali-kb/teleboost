@@ -9,7 +9,7 @@ export class TelegramService {
   constructor(
     private readonly telegramIdentityService: TelegramIdentityService,
     private readonly telegramChannelService: TelegramChannelService,
-  ) {}
+  ) { }
 
   getWelcomeMessage(): string {
     return (
@@ -107,6 +107,33 @@ export class TelegramService {
       this.logger.error(
         `Failed to fetch channels for owner ${ownerId}: ${error.message}`,
       );
+      throw error;
+    }
+  }
+
+  async getChannelById(id: string) {
+    try {
+      return await this.telegramChannelService.findOne(id);
+    } catch (error) {
+      this.logger.error(`Failed to fetch channel ${id}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async updateChannel(id: string, data: any) {
+    try {
+      return await this.telegramChannelService.update(id, data);
+    } catch (error) {
+      this.logger.error(`Failed to update channel ${id}: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async deleteChannel(id: string) {
+    try {
+      return await this.telegramChannelService.remove(id);
+    } catch (error) {
+      this.logger.error(`Failed to delete channel ${id}: ${error.message}`);
       throw error;
     }
   }

@@ -66,7 +66,11 @@ export class TelegramChannelService {
       const response = await this.client.post('/telegram-channels', data);
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to create telegram channel: ${error.message}`);
+      if (error.response) {
+        this.logger.error(`Failed to create telegram channel: ${JSON.stringify(error.response.data)}`);
+      } else {
+        this.logger.error(`Failed to create telegram channel: ${error.message}`);
+      }
       throw error;
     }
   }

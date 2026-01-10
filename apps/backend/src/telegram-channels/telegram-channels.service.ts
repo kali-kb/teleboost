@@ -8,7 +8,7 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TelegramChannelsService {
-  constructor(@Inject(DRIZZLE) private readonly drizzle) {}
+  constructor(@Inject(DRIZZLE) private readonly drizzle) { }
 
   async getAllTelegramChannels() {
     const channels = await this.drizzle.select().from(schema.telegram_channels);
