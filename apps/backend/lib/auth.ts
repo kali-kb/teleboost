@@ -1,17 +1,11 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import * as schema from '../drizzle/db/schema';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { db } from '../drizzle/db/db';
 import crypto from 'node:crypto';
 
 console.log(`database url: ${process.env.DATABASE_URL}`)
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const db = drizzle(pool, { schema });
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
