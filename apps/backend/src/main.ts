@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { join } from 'path';
 import { config } from 'dotenv';
 config({ path: join(process.cwd(), '.env') });
@@ -28,7 +29,7 @@ async function bootstrap() {
   });
 
   // Global validation pipe
-  // app.setGlobalPrefix('api')
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(port);

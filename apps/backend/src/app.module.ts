@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
 // import { DebugController } from './debug/debug.controller';
 import { TelegramIdentitiesModule } from './telegram-identities/telegram-identities.module';
 import { TelegramChannelsModule } from './telegram-channels/telegram-channels.module';
+import { AdvertiserModule } from './advertiser/advertiser.module';
 
 @Module({
   imports: [
@@ -26,8 +27,9 @@ import { TelegramChannelsModule } from './telegram-channels/telegram-channels.mo
     UserModule,
     TelegramIdentitiesModule,
     TelegramChannelsModule,
+    AdvertiserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

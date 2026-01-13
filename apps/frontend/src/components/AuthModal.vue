@@ -4,6 +4,7 @@ import { authClient } from "../../lib/auth-client";
 
 const props = defineProps<{
   isOpen: boolean;
+  initialStep?: AuthStep;
 }>();
 
 const emit = defineEmits(["close", "authComplete"]);
@@ -15,7 +16,13 @@ type AuthStep =
   | "profile-type"
   | "company-details"
   | "complete";
-const currentStep = ref<AuthStep>("signin");
+const currentStep = ref<AuthStep>(props.initialStep || "signin");
+
+watch(() => props.initialStep, (newStep) => {
+  if (newStep) {
+    currentStep.value = newStep;
+  }
+});
 const showPassword = ref(false);
 const isLoading = ref(false);
 
@@ -114,7 +121,7 @@ const validateField = (field: keyof typeof form | "companyName") => {
 };
 
 const handleGoogleSignIn = async () => {
-  const callbackURL = window.location.origin + "/#/dashboard";
+  const callbackURL = window.location.origin + "/";
   authClient.signIn.social({
     provider: "google",
     callbackURL: callbackURL,
@@ -156,18 +163,62 @@ const handleAuth = async () => {
   if (!isValid) return;
 
   isLoading.value = true;
-  // Simulate API call for account creation
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  isLoading.value = false;
 
-  if (currentStep.value === "signup") {
-    // Move to profile type selection
-    currentStep.value = "profile-type";
-  } else {
-    // Sign in complete - redirect to dashboard
-    emit("authComplete", { type: "signin", email: form.email });
-    window.location.hash = "#/dashboard";
-    emit("close");
+  try {
+    if (currentStep.value === "signup") {
+      const { data, error } = await authClient.signUp.email({
+        email: form.email,
+        password: form.password,
+        name: form.fullName,
+      }, {
+        onSuccess: () => {
+          isLoading.value = false;
+          currentStep.value = "profile-type";
+        },
+        onError: (ctx) => {
+          errors.email = ctx.error.message || "An error occurred during signup";
+          isLoading.value = false;
+        }
+      });
+      return; // onSuccess handles transition
+    } else {
+      const { data, error } = await authClient.signIn.email({
+        email: form.email,
+        password: form.password,
+      });
+
+      if (error) {
+        errors.email = error.message || "Invalid email or password";
+        isLoading.value = false;
+        return;
+      }
+
+      // Check if user has a profile
+      try {
+        const profileResponse = await fetch("http://localhost:3001/api/advertiser/profile", {
+          credentials: 'include'
+        });
+        const profile = await profileResponse.json();
+
+        if (!profile || profile.error || Object.keys(profile).length === 0) {
+          currentStep.value = "profile-type";
+          isLoading.value = false;
+        } else {
+          // Sign in complete - redirect to dashboard
+          emit("authComplete", { type: "signin", email: form.email });
+          window.location.hash = "#/dashboard";
+          emit("close");
+        }
+      } catch (e) {
+        // If profile fetch fails, assume no profile
+        currentStep.value = "profile-type";
+        isLoading.value = false;
+      }
+    }
+  } catch (err) {
+    console.error("Auth error:", err);
+    errors.email = "A connection error occurred";
+    isLoading.value = false;
   }
 };
 
@@ -191,30 +242,53 @@ const handleCompanySubmit = async () => {
     return;
   }
 
-  isLoading.value = true;
-  // Simulate API call to save company details
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  isLoading.value = false;
-
   completeSignup();
 };
 
-const completeSignup = () => {
-  currentStep.value = "complete";
-
-  // Auto-redirect to dashboard after success animation
-  setTimeout(() => {
-    emit("authComplete", {
-      type: "signup",
-      email: form.email,
-      advertiserType: selectedAdvertiserType.value,
-      company:
-        selectedAdvertiserType.value === "ENTERPRISE" ? companyForm : null,
+const completeSignup = async () => {
+  isLoading.value = true;
+  try {
+    const response = await fetch("http://localhost:3001/api/advertiser/profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        type: selectedAdvertiserType.value,
+        companyName: companyForm.companyName,
+        registrationNumber: companyForm.registrationNumber,
+        website: companyForm.website,
+      }),
     });
-    // Navigate to dashboard
-    window.location.hash = "#/dashboard";
-    resetAndClose();
-  }, 2500);
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed with status ${response.status}`);
+    }
+
+    currentStep.value = "complete";
+
+    // Auto-redirect to dashboard after success animation
+    setTimeout(() => {
+      emit("authComplete", {
+        type: "signup",
+        email: form.email,
+        advertiserType: selectedAdvertiserType.value,
+        company:
+          selectedAdvertiserType.value === "ENTERPRISE" ? companyForm : null,
+      });
+      // Navigate to dashboard
+      window.location.hash = "#/dashboard";
+      resetAndClose();
+    }, 2500);
+  } catch (error) {
+    console.error("Failed to save profile:", error);
+    // Even if it fails, maybe let them through or show error?
+    currentStep.value = "complete";
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const toggleMode = () => {

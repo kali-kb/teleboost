@@ -6,10 +6,27 @@ const budget = ref(5000);
 const cpm = ref(2.5);
 const currentRole = ref<'advertisers' | 'channel-owners'>('advertisers');
 const showAuthModal = ref(false);
+const isUserLoggedIn = ref(false);
+const hasProfile = ref(false);
+const isInitializing = ref(true);
 
-const handleCTA = () => {
+const handleCTA = async () => {
   if (currentRole.value === 'advertisers') {
-    showAuthModal.value = true;
+    // If still checking session/profile, we could show a loader or just wait
+    // For now, let's wait if it's very fast, or just proceed if we have a result
+    if (isInitializing.value) return; 
+
+    if (isUserLoggedIn.value) {
+      if (hasProfile.value) {
+        window.location.hash = "#/dashboard";
+      } else {
+        authModalStep.value = "profile-type";
+        showAuthModal.value = true;
+      }
+    } else {
+      authModalStep.value = "signin";
+      showAuthModal.value = true;
+    }
   } else {
     window.open(content.value.ctaLink, '_blank', 'noopener,noreferrer');
   }
@@ -56,6 +73,33 @@ const content = computed(() => {
       goalDesc: "Our goal is to bridge the payment gap and provide channel owners with additional income from ad request of local businesses. We also aim to have ad tasks keep flowing to your channel so your channel doesn't have to go through days or even weeks without ads as we onboard more and more local businesses that find our platform easy and effective to advertise with."
     };
   }
+});
+
+import { onMounted } from 'vue';
+import { authClient } from '../../lib/auth-client';
+
+const authModalStep = ref<any>("signin");
+
+onMounted(async () => {
+  console.log("LandingPage: Checking session...");
+  const { data: session } = await authClient.getSession();
+  isUserLoggedIn.value = !!session;
+  
+  if (session) {
+    try {
+      console.log("LandingPage: Fetching advertiser profile...");
+      const response = await fetch("http://localhost:3001/api/advertiser/profile", {
+        credentials: 'include'
+      });
+      const profile = await response.json();
+      console.log("LandingPage: Raw profile response:", JSON.stringify(profile));
+      hasProfile.value = profile && !profile.error && profile.exists !== false;
+      console.log("LandingPage: Auth state updated - LoggedIn:", isUserLoggedIn.value, "HasProfile:", hasProfile.value);
+    } catch (e) {
+      console.error("LandingPage: Profile check failed", e);
+    }
+  }
+  isInitializing.value = false;
 });
 </script>
 
@@ -296,7 +340,7 @@ const content = computed(() => {
         </div>
       </div>
     </footer>
-    <AuthModal :is-open="showAuthModal" @close="showAuthModal = false" />
+    <AuthModal :is-open="showAuthModal" :initial-step="authModalStep" @close="showAuthModal = false" />
   </div>
 </template>
 

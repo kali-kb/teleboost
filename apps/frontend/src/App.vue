@@ -2,14 +2,22 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import LandingPage from './pages/LandingPage.vue';
 import AdvertiserDashboard from './pages/AdvertiserDashboard.vue';
+import { authClient } from '../lib/auth-client';
 
 // Simple hash-based routing
 const currentRoute = ref<'landing' | 'dashboard'>('landing');
 
-const updateRoute = () => {
+const updateRoute = async () => {
   const hash = window.location.hash;
+  
   if (hash === '#/dashboard') {
-    currentRoute.value = 'dashboard';
+    const { data: session } = await authClient.getSession();
+    if (!session) {
+      window.location.hash = ''; // Force back to landing
+      currentRoute.value = 'landing';
+    } else {
+      currentRoute.value = 'dashboard';
+    }
   } else {
     currentRoute.value = 'landing';
   }

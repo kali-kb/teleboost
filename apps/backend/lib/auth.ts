@@ -7,24 +7,22 @@ import crypto from 'node:crypto';
 
 console.log(`database url: ${process.env.DATABASE_URL}`)
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const db = drizzle(pool, { schema });
+
 export const auth = betterAuth({
-  database: drizzleAdapter(
-    drizzle(
-      new Pool({
-        connectionString: process.env.DATABASE_URL,
-      }),
-      { schema },
-    ),
-    {
-      provider: 'pg',
-      schema: {
-        user: schema.users,
-        session: schema.sessions,
-        account: schema.accounts,
-        verification: schema.verifications,
-      },
+  database: drizzleAdapter(db, {
+    provider: 'pg',
+    schema: {
+      user: schema.users,
+      session: schema.sessions,
+      account: schema.accounts,
+      verification: schema.verifications,
     },
-  ),
+  }),
   baseURL: 'http://localhost:3001/api/auth',
   secret: process.env.BETTER_AUTH_SECRET,
   debug: true,
@@ -43,6 +41,8 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    generateId: () => crypto.randomUUID(),
+    database: {
+      generateId: () => crypto.randomUUID(),
+    },
   },
 }) as unknown as ReturnType<typeof betterAuth>;

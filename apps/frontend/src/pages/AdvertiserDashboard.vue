@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { authClient } from '../../lib/auth-client';
 import DashboardOverview from '../components/dashboard/DashboardOverview.vue';
 import CampaignsView from '../components/dashboard/CampaignsView.vue';
 import WalletView from '../components/dashboard/WalletView.vue';
@@ -9,14 +10,40 @@ import SettingsView from '../components/dashboard/SettingsView.vue';
 const currentPage = ref<'home' | 'campaigns' | 'wallet' | 'settings'>('home');
 const isSidebarOpen = ref(true);
 const isMobileSidebarOpen = ref(false);
+const isLoadingUser = ref(true);
 
 // Mock user data (In production, this would come from a store like Pinia)
 const user = ref({
-  name: 'Abebe Kebede',
-  email: 'abebe@company.et',
-  company: 'TechStart Ethiopia',
-  type: 'ENTERPRISE' as 'INDIVIDUAL' | 'ENTERPRISE',
-  avatar: null
+  name: '',
+  email: '',
+  company: '',
+  type: 'INDIVIDUAL' as 'INDIVIDUAL' | 'ENTERPRISE',
+  avatar: null as string | null
+});
+
+onMounted(async () => {
+  try {
+    const { data: sessionData } = await authClient.getSession();
+    if (sessionData?.user) {
+      user.value.name = sessionData.user.name;
+      user.value.email = sessionData.user.email;
+      user.value.avatar = sessionData.user.image || null;
+
+      // also fetch advertiser details
+      const response = await fetch("http://localhost:3001/api/advertiser/profile", {
+        credentials: 'include'
+      });
+      const profile = await response.json();
+      if (profile && !profile.error && profile.exists !== false) {
+        user.value.type = profile.type;
+        user.value.company = profile.company_name || '';
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load user data:", err);
+  } finally {
+    isLoadingUser.value = false;
+  }
 });
 
 // Mock wallet data
@@ -87,12 +114,22 @@ const setPage = (page: typeof currentPage.value) => {
 
       <!-- User Profile -->
       <div class="p-4 border-t border-slate-100">
-        <div class="flex items-center gap-3 px-2">
-          <div class="size-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold">
-            {{ user.name.charAt(0) }}
+        <div v-if="isLoadingUser" class="flex items-center gap-3 px-2 animate-pulse">
+           <div class="size-10 bg-slate-200 rounded-full"></div>
+           <div v-if="isSidebarOpen" class="flex-1 space-y-2">
+             <div class="h-3 bg-slate-200 rounded w-24"></div>
+             <div class="h-2 bg-slate-100 rounded w-32"></div>
+           </div>
+        </div>
+        <div v-else class="flex items-center gap-3 px-2">
+          <div v-if="user.avatar" class="size-10 rounded-full overflow-hidden border border-slate-100">
+            <img :src="user.avatar" class="size-full object-cover" @error="user.avatar = null" />
+          </div>
+          <div v-else class="size-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 font-bold">
+            {{ user.name ? user.name.charAt(0) : '?' }}
           </div>
           <div v-if="isSidebarOpen" class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-slate-900 truncate">{{ user.name }}</p>
+            <p class="text-sm font-bold text-slate-900 truncate">{{ user.name || 'User' }}</p>
             <p class="text-xs text-slate-500 truncate">{{ user.email }}</p>
           </div>
         </div>
