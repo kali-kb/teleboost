@@ -5,9 +5,12 @@ import DashboardOverview from '../components/dashboard/DashboardOverview.vue';
 import CampaignsView from '../components/dashboard/CampaignsView.vue';
 import WalletView from '../components/dashboard/WalletView.vue';
 import SettingsView from '../components/dashboard/SettingsView.vue';
+import ChannelSearchView from '../components/dashboard/ChannelSearchView.vue';
+
 
 // Navigation state
-const currentPage = ref<'home' | 'campaigns' | 'wallet' | 'settings'>('home');
+const currentPage = ref<'home' | 'campaigns' | 'wallet' | 'settings' | 'search_channels'>('home');
+
 const isSidebarOpen = ref(true);
 const isMobileSidebarOpen = ref(false);
 const isLoadingUser = ref(true);
@@ -154,10 +157,14 @@ const setPage = (page: typeof currentPage.value) => {
             <span class="material-symbols-outlined">notifications</span>
             <span class="absolute top-1 right-1 size-2 bg-rose-500 rounded-full"></span>
           </button>
-          <button class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold text-sm transition-colors">
+          <button 
+            @click="setPage('search_channels')"
+            class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold text-sm transition-colors"
+          >
             <span class="material-symbols-outlined text-[18px]">add</span>
             New Campaign
           </button>
+
         </div>
       </header>
 
@@ -167,7 +174,9 @@ const setPage = (page: typeof currentPage.value) => {
           :is="currentPage === 'home' ? DashboardOverview : 
                currentPage === 'campaigns' ? CampaignsView : 
                currentPage === 'wallet' ? WalletView : 
+               currentPage === 'search_channels' ? ChannelSearchView :
                SettingsView"
+
           :user="user"
           :wallet="wallet"
           :campaigns="campaigns"

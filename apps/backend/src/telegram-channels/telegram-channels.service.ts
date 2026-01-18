@@ -11,7 +11,11 @@ export class TelegramChannelsService {
   constructor(@Inject(DRIZZLE) private readonly drizzle) { }
 
   async getAllTelegramChannels() {
-    const channels = await this.drizzle.select().from(schema.telegram_channels);
+    const channels = await this.drizzle.query.telegram_channels.findMany({
+      with: {
+        audience: true
+      }
+    });
     return channels;
   }
 

@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { TelegramIdentitiesModule } from './telegram-identities/telegram-identities.module';
 import { TelegramChannelsModule } from './telegram-channels/telegram-channels.module';
 import { AdvertiserModule } from './advertiser/advertiser.module';
+import { CampaignsModule } from './campaigns/campaigns.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AdvertiserModule } from './advertiser/advertiser.module';
     TelegramIdentitiesModule,
     TelegramChannelsModule,
     AdvertiserModule,
+    CampaignsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

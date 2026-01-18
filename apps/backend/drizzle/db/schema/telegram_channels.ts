@@ -32,12 +32,15 @@ export const telegram_channels = pgTable('telegram_channel', {
     .notNull(),
 });
 
+import { channel_audience } from './channel_audience';
+
 export const telegram_channels_relations = relations(
   telegram_channels,
-  ({ one }) => ({
+  ({ one, many }) => ({
     owner: one(telegram_identities, {
       fields: [telegram_channels.owner_id],
       references: [telegram_identities.id],
     }),
+    audience: many(channel_audience),
   }),
 );
