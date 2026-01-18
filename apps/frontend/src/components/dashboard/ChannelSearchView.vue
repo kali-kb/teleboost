@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { useCampaignCartStore } from '../../stores/campaignCart';
 
+const cartStore = useCampaignCartStore();
 const channels = ref<any[]>([]);
+
 const isLoading = ref(true);
 const searchQuery = ref('');
 const selectedCategory = ref('All');
 const showAdvancedFilters = ref(false);
+const selectedChannel = ref<any | null>(null);
 
 // Advanced Filter States
 const minSubs = ref<number | null>(null);
@@ -81,10 +85,131 @@ const formatNumber = (num: number) => {
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
   return num.toString();
 };
+
+const openChannelDetails = (channel: any) => {
+  selectedChannel.value = channel;
+};
+
+const closeDetails = () => {
+    selectedChannel.value = null;
+};
 </script>
 
 <template>
   <div class="space-y-6 animate-in fade-in duration-500">
+    <!-- Detail Modal -->
+    <Teleport to="body">
+      <div v-if="selectedChannel" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6" @click="closeDetails">
+        <div class="bg-white w-full max-w-2xl rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in duration-300 max-h-[90vh] flex flex-col" @click.stop>
+            <!-- Hero / Banner Area -->
+            <div class="h-32 sm:h-40 bg-slate-900 relative shrink-0">
+                <button @click="closeDetails" class="absolute top-4 right-4 size-10 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all z-10">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <div class="absolute -bottom-10 left-6 sm:left-8 p-1 bg-white rounded-3xl shadow-xl">
+                    <div class="size-20 sm:size-24 rounded-2xl bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center">
+                        <img v-if="selectedChannel.avatar_url" :src="selectedChannel.avatar_url" class="size-full object-cover" />
+                        <span v-else class="material-symbols-outlined text-4xl text-slate-300">campaign</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="p-6 sm:p-8 pt-12 sm:pt-14 overflow-y-auto">
+                <!-- Main Header -->
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-900">{{ selectedChannel.title }}</h2>
+                            <span v-if="selectedChannel.verified" class="material-symbols-outlined text-emerald-500 text-[20px]">verified</span>
+                        </div>
+                        <p class="text-slate-500 font-medium text-sm sm:text-base">@{{ selectedChannel.username }}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest ring-1 ring-emerald-100">
+                          {{ selectedChannel.category || 'General' }}
+                        </span>
+                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest ring-1 ring-primary/20">
+                          {{ selectedChannel.price_per_post }} ETB / Post
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-100 text-center sm:text-left">
+                        <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Subscribers</p>
+                        <p class="text-lg sm:text-xl font-black text-slate-900">{{ formatNumber(selectedChannel.subscribers || 0) }}</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-100 text-center sm:text-left">
+                        <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. Views</p>
+                        <p class="text-lg sm:text-xl font-black text-slate-900">{{ formatNumber(selectedChannel.avg_views || 0) }}</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-100 text-center sm:text-left">
+                        <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Engagement</p>
+                        <p class="text-lg sm:text-xl font-black text-slate-900">
+                            {{ (((selectedChannel.avg_views || 0) / (selectedChannel.subscribers || 1)) * 100).toFixed(1) }}%
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-100 text-center sm:text-left">
+                        <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Trust Score</p>
+                        <div class="flex items-center justify-center sm:justify-start gap-1">
+                            <span class="text-lg sm:text-xl font-black text-slate-900">{{ selectedChannel.trust_score || 0 }}</span>
+                            <span class="text-[10px] font-bold text-slate-400">/100</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audience Breakdown -->
+                <div class="space-y-4 mb-8 text-center sm:text-left">
+                    <h3 class="font-black text-slate-900 uppercase tracking-widest text-[10px] sm:text-xs">Audience Demographics</h3>
+                    <div v-if="selectedChannel.audience && selectedChannel.audience.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                            <div class="size-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined">language</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">Primary Language</p>
+                                <p class="font-bold text-slate-900 text-sm sm:text-base truncate">{{ selectedChannel.audience[0].language || 'Not Specified' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                            <div class="size-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined">public</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">Primary Location</p>
+                                <p class="font-bold text-slate-900 text-sm sm:text-base truncate">{{ selectedChannel.audience[0].primary_country || 'Global' }}{{ selectedChannel.audience[0].primary_city ? ', ' + selectedChannel.audience[0].primary_city : '' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="p-6 sm:p-8 bg-slate-50 rounded-3xl border border-dashed border-slate-200 text-center">
+                        <p class="text-xs sm:text-sm font-bold text-slate-400">Detailed audience data not yet verified for this channel.</p>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 pt-6 border-t border-slate-100">
+                    <button 
+                        @click="cartStore.toggleChannel(selectedChannel); closeDetails()"
+                        class="w-full sm:flex-1 py-3 sm:py-4 rounded-2xl font-black transition-all shadow-lg flex items-center justify-center gap-2"
+                        :class="cartStore.isSelected(selectedChannel.id) 
+                            ? 'bg-rose-50 text-rose-500 hover:bg-rose-100 shadow-rose-100' 
+                            : 'bg-primary hover:bg-primary-hover text-white shadow-primary/25'"
+                    >
+                        <span class="material-symbols-outlined">{{ cartStore.isSelected(selectedChannel.id) ? 'remove_circle' : 'add_circle' }}</span>
+                        {{ cartStore.isSelected(selectedChannel.id) ? 'Remove from Plan' : 'Add to Plan' }}
+                    </button>
+                    <button class="w-full sm:w-auto px-6 py-3 sm:py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black transition-all">
+                        View Profile
+                    </button>
+                </div>
+
+            </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Search & Main Filters -->
     <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-4">
       <div class="flex flex-col lg:flex-row lg:items-center gap-4">
@@ -215,7 +340,8 @@ const formatNumber = (num: number) => {
         <div 
           v-for="channel in filteredChannels" 
           :key="channel.id"
-          class="group bg-white p-4 rounded-2xl border border-slate-100 hover:border-primary/40 hover:shadow-lg hover:shadow-slate-200/50 transition-all flex flex-col md:flex-row md:items-center gap-4"
+          class="group bg-white p-4 rounded-2xl border border-slate-100 hover:border-primary/40 hover:shadow-lg hover:shadow-slate-200/50 transition-all flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
+          @click="openChannelDetails(channel)"
         >
           <!-- Channel Identity -->
           <div class="flex-1 flex items-center gap-4">
@@ -260,11 +386,18 @@ const formatNumber = (num: number) => {
           </div>
 
           <!-- Action Button -->
-          <div class="w-full md:w-32 flex justify-end">
-            <button class="w-full md:w-auto px-6 py-2.5 bg-slate-900 hover:bg-primary text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-slate-900/10">
-              Select
+          <div class="w-full md:w-32 flex justify-end" @click.stop>
+            <button 
+                @click="cartStore.toggleChannel(channel)"
+                class="w-full md:w-auto px-6 py-2.5 text-sm font-bold rounded-xl transition-all shadow-md"
+                :class="cartStore.isSelected(channel.id) 
+                    ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 shadow-rose-100' 
+                    : 'bg-slate-900 hover:bg-primary text-white shadow-slate-900/10'"
+            >
+              {{ cartStore.isSelected(channel.id) ? 'Remove' : 'Select' }}
             </button>
           </div>
+
         </div>
       </div>
 
@@ -300,11 +433,20 @@ const formatNumber = (num: number) => {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes zoom-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .animate-in {
   animation: fade-in 0.5s ease-out forwards;
 }
 
 .slide-in-top {
   animation: slide-in-top 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.zoom-in {
+    animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 </style>

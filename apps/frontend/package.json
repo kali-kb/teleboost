@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "better-auth": "^1.4.7",
+        "pinia": "^3.0.4",
         "vue": "^3.4.0"
     },
     "devDependencies": {

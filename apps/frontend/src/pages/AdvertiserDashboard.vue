@@ -6,6 +6,8 @@ import CampaignsView from '../components/dashboard/CampaignsView.vue';
 import WalletView from '../components/dashboard/WalletView.vue';
 import SettingsView from '../components/dashboard/SettingsView.vue';
 import ChannelSearchView from '../components/dashboard/ChannelSearchView.vue';
+import CampaignCart from '../components/dashboard/CampaignCart.vue';
+
 
 
 // Navigation state
@@ -150,7 +152,9 @@ const setPage = (page: typeof currentPage.value) => {
           <button @click="isSidebarOpen = !isSidebarOpen" class="hidden lg:flex p-2 hover:bg-slate-100 rounded-lg text-slate-600">
             <span class="material-symbols-outlined">{{ isSidebarOpen ? 'menu_open' : 'menu' }}</span>
           </button>
-          <h1 class="text-lg font-bold text-slate-900 capitalize">{{ currentPage === 'home' ? 'Dashboard' : currentPage }}</h1>
+          <h1 class="text-lg font-bold text-slate-900 capitalize">
+            {{ currentPage === 'home' ? 'Dashboard' : currentPage.replace('_', ' ') }}
+          </h1>
         </div>
         <div class="flex items-center gap-3">
           <button class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 relative">
@@ -184,8 +188,12 @@ const setPage = (page: typeof currentPage.value) => {
         />
       </div>
     </main>
+
+    <!-- Campaign Plan / Cart -->
+    <CampaignCart />
   </div>
 </template>
+
 
 <style scoped>
 </style>
