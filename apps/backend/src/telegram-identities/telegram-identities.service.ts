@@ -5,10 +5,14 @@ import { Inject } from '@nestjs/common';
 import { DRIZZLE } from '../../drizzle/db/database.module';
 import { telegram_identities } from '../../drizzle/db/schema';
 import { eq } from 'drizzle-orm';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class TelegramIdentitiesService {
-  constructor(@Inject(DRIZZLE) private readonly drizzle) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly drizzle,
+    private readonly walletService: WalletService,
+  ) { }
 
   async create(createTelegramIdentityDto: CreateTelegramIdentityDto) {
     const existing = await this.drizzle
@@ -26,7 +30,7 @@ export class TelegramIdentitiesService {
       return existing[0];
     }
 
-    return this.drizzle
+    const [newIdentity] = await this.drizzle
       .insert(telegram_identities)
       .values({
         telegram_user_id: createTelegramIdentityDto.telegramId,
@@ -34,6 +38,13 @@ export class TelegramIdentitiesService {
         first_name: createTelegramIdentityDto.firstName,
       })
       .returning();
+
+    // Create wallet for new channel owner
+    if (newIdentity?.id) {
+      await this.walletService.createChannelOwnerWallet(newIdentity.id);
+    }
+
+    return newIdentity;
   }
 
   async findAll() {

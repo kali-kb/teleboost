@@ -3,11 +3,13 @@ import { DRIZZLE } from '../../drizzle/db/database.module';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../drizzle/db/schema';
 import { eq } from 'drizzle-orm';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class AdvertiserService {
     constructor(
         @Inject(DRIZZLE) private readonly db: NodePgDatabase<typeof schema>,
+        private readonly walletService: WalletService,
     ) { }
 
     async getProfile(userId: string) {
@@ -61,6 +63,9 @@ export class AdvertiserService {
                 .returning();
 
             console.log(`[AdvertiserService] Profile created successfully for ${userId}`);
+
+            // Create wallet for new advertiser
+            await this.walletService.createAdvertiserWallet(userId);
 
             // Verification check
             const check = await this.getProfile(userId);

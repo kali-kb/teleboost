@@ -15,6 +15,10 @@ import { TelegramIdentitiesModule } from './telegram-identities/telegram-identit
 import { TelegramChannelsModule } from './telegram-channels/telegram-channels.module';
 import { AdvertiserModule } from './advertiser/advertiser.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
+import { WalletModule } from './wallet/wallet.module';
+import { BankAccountModule } from './bank-accounts/bank-account.module';
+import { WithdrawalModule } from './withdrawals/withdrawal.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -30,6 +34,10 @@ import { CampaignsModule } from './campaigns/campaigns.module';
     TelegramChannelsModule,
     AdvertiserModule,
     CampaignsModule,
+    WalletModule,
+    BankAccountModule,
+    WithdrawalModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

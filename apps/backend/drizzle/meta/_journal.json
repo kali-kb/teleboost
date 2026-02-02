@@ -15,6 +15,20 @@
       "when": 1768044550690,
       "tag": "0001_chubby_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770020428956,
+      "tag": "0002_round_demogoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770021693016,
+      "tag": "0003_amused_boomerang",
+      "breakpoints": true
     }
   ]
 }

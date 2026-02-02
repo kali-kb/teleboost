@@ -7,6 +7,7 @@ export * from './enums/wallet_owner_type';
 export * from './enums/transaction_type';
 export * from './enums/dispute_status';
 export * from './enums/user_role';
+export * from './enums/withdrawal_status';
 
 // Root Tables (No dependencies on other tables)
 export * from './telegram_identities';
@@ -16,6 +17,7 @@ export * from './payment_methods';
 export * from './auth'; // Depends on user_role enum
 export * from './wallets'; // Depends on users, telegram_identities
 export * from './telegram_channels'; // Depends on telegram_identities
+export * from './bank_accounts'; // Depends on telegram_identities
 
 // Profile Tables
 export * from './advertiser_profiles'; // Depends on users
@@ -31,6 +33,7 @@ export * from './campaigns'; // Depends on users
 export * from './campaign_placements'; // Depends on campaigns, telegram_channels
 export * from './campaign_posts'; // Depends on campaign_placements
 export * from './payments'; // Depends on campaign_placements
+export * from './withdrawals'; // Depends on wallets, bank_accounts
 export * from './disputes'; // Depends on campaign_placements
 export * from './payment_receipts'; // Depends on payments
 export * from './transactions'; // Depends on wallets

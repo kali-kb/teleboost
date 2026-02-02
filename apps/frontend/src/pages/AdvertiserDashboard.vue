@@ -26,6 +26,14 @@ const user = ref({
   avatar: null as string | null
 });
 
+// Wallet state
+const wallet = ref({
+  balance: 0,
+  locked: 0,
+  currency: 'ETB',
+  recentTransactions: [] as any[]
+});
+
 onMounted(async () => {
   try {
     const { data: sessionData } = await authClient.getSession();
@@ -34,14 +42,41 @@ onMounted(async () => {
       user.value.email = sessionData.user.email;
       user.value.avatar = sessionData.user.image || null;
 
-      // also fetch advertiser details
-      const response = await fetch("http://localhost:3001/api/advertiser/profile", {
+      // fetch advertiser details
+      const profileResponse = await fetch("http://localhost:3001/api/advertiser/profile", {
         credentials: 'include'
       });
-      const profile = await response.json();
+      const profile = await profileResponse.json();
       if (profile && !profile.error && profile.exists !== false) {
         user.value.type = profile.type;
         user.value.company = profile.company_name || '';
+      }
+
+      // Fetch wallet data
+      const walletResponse = await fetch("http://localhost:3001/api/wallets/my-wallet", {
+        credentials: 'include'
+      });
+      const walletData = await walletResponse.json();
+      
+      if (walletData && !walletData.error) {
+        wallet.value.balance = parseFloat(walletData.balance);
+        wallet.value.locked = parseFloat(walletData.locked_balance);
+        wallet.value.currency = walletData.currency;
+
+        // Fetch transactions
+        const txResponse = await fetch(`http://localhost:3001/api/wallets/${walletData.id}/transactions`, {
+          credentials: 'include'
+        });
+        const transactions = await txResponse.json();
+        if (Array.isArray(transactions)) {
+          wallet.value.recentTransactions = transactions.map(tx => ({
+            id: tx.id,
+            type: tx.reference_type || 'transaction',
+            amount: tx.type === 'CREDIT' ? parseFloat(tx.amount) : -parseFloat(tx.amount),
+            date: new Date(tx.created_at).toLocaleDateString(),
+            status: 'completed' // transactions in DB are completed if they exist for now
+          }));
+        }
       }
     }
   } catch (err) {
@@ -49,18 +84,6 @@ onMounted(async () => {
   } finally {
     isLoadingUser.value = false;
   }
-});
-
-// Mock wallet data
-const wallet = ref({
-  balance: 15420.50,
-  locked: 3500.00,
-  currency: 'ETB',
-  recentTransactions: [
-    { id: '1', type: 'deposit', amount: 5000, date: '2024-12-28', status: 'completed' },
-    { id: '2', type: 'campaign', amount: -1200, date: '2024-12-27', status: 'completed', campaign: 'Winter Sale' },
-    { id: '3', type: 'campaign', amount: -800, date: '2024-12-25', status: 'completed', campaign: 'New Year Promo' },
-  ]
 });
 
 // Mock campaigns data

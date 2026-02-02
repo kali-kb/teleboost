@@ -100,7 +100,10 @@ const dashboardStats = computed(() => ({
           <button @click="emit('setPage', 'wallet')" class="text-sm text-primary font-medium hover:underline">View All</button>
         </div>
         <div class="divide-y divide-slate-100">
-          <div v-for="tx in wallet.recentTransactions" :key="tx.id" class="px-6 py-4 hover:bg-slate-50 transition-colors">
+          <div v-if="wallet.recentTransactions.length === 0" class="px-6 py-8 text-center text-slate-400">
+            <p class="text-sm font-medium">No transactions yet</p>
+          </div>
+          <div v-else v-for="tx in wallet.recentTransactions" :key="tx.id" class="px-6 py-4 hover:bg-slate-50 transition-colors">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="size-10 rounded-full flex items-center justify-center"

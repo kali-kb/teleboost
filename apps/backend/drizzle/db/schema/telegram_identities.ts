@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bank_accounts } from "./bank_accounts";
+import { wallets } from "./wallets";
 
 export const telegram_identities = pgTable("telegram_identity", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -12,3 +14,11 @@ export const telegram_identities = pgTable("telegram_identity", {
         .$onUpdate(() => new Date())
         .notNull(),
 });
+
+export const telegram_identities_relations = relations(telegram_identities, ({ many, one }) => ({
+    bank_accounts: many(bank_accounts),
+    wallet: one(wallets, {
+        fields: [telegram_identities.id],
+        references: [wallets.owner_telegram_id],
+    }),
+}));

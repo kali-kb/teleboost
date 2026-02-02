@@ -42,7 +42,13 @@ defineProps<{
         <h3 class="font-bold text-slate-900">Transaction History</h3>
       </div>
       <div class="divide-y divide-slate-100">
-        <div v-for="tx in wallet.recentTransactions" :key="tx.id" class="px-6 py-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
+        <div v-if="wallet.recentTransactions.length === 0" class="px-6 py-12 text-center text-slate-400">
+          <div class="flex flex-col items-center gap-3">
+            <span class="material-symbols-outlined text-4xl">history</span>
+            <p class="font-bold text-sm">No transactions yet</p>
+          </div>
+        </div>
+        <div v-else v-for="tx in wallet.recentTransactions" :key="tx.id" class="px-6 py-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="size-12 rounded-xl flex items-center justify-center"
               :class="tx.amount > 0 ? 'bg-emerald-100' : 'bg-slate-100'">
