@@ -1,6 +1,8 @@
 import { pgTable, text, timestamp, jsonb, uuid } from 'drizzle-orm/pg-core';
 import { users } from './auth';
 import { campaign_status_enum } from './enums/campaign_status';
+import { relations } from 'drizzle-orm';
+import { campaign_placements } from './campaign_placements';
 
 export const campaigns = pgTable('campaign', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -16,3 +18,7 @@ export const campaigns = pgTable('campaign', {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export const campaigns_relations = relations(campaigns, ({ many }) => ({
+  placements: many(campaign_placements),
+}));

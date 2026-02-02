@@ -16,15 +16,31 @@ export class CampaignsService {
     ) { }
 
     async createCampaign(advertiser_id: string, createCampaignDto: CreateCampaignDto) {
-        const [result] = await this.db
-            .insert(campaigns)
-            .values({
-                ...createCampaignDto,
-                advertiser_id,
-                status: createCampaignDto.status ?? CampaignStatus.DRAFT,
-            })
-            .returning();
-        return result;
+        return await this.db.transaction(async (tx) => {
+            const { placements, ...campaignData } = createCampaignDto;
+
+            const [campaign] = await tx
+                .insert(campaigns)
+                .values({
+                    ...campaignData,
+                    advertiser_id,
+                    status: campaignData.status ?? CampaignStatus.DRAFT,
+                })
+                .returning();
+
+            if (placements && placements.length > 0) {
+                await tx.insert(schema.campaign_placements).values(
+                    placements.map((p) => ({
+                        campaign_id: campaign.id,
+                        channel_id: p.channel_id,
+                        price: p.price,
+                        status: schema.CampaignPlacementStatus.PENDING_PAYMENT,
+                    })),
+                );
+            }
+
+            return campaign;
+        });
     }
 
     async getCampaigns() {
@@ -37,7 +53,13 @@ export class CampaignsService {
     }
 
     async getCampaignsByAdvertiserId(advertiser_id: string) {
-        return this.db.select().from(campaigns).where(eq(campaigns.advertiser_id, advertiser_id));
+        return this.db.query.campaigns.findMany({
+            where: eq(campaigns.advertiser_id, advertiser_id),
+            with: {
+                placements: true,
+            },
+            orderBy: (campaigns, { desc }) => [desc(campaigns.created_at)],
+        });
     }
 
     async updateCampaign(id: string, advertiser_id: string, updateCampaignDto: UpdateCampaignDto) {

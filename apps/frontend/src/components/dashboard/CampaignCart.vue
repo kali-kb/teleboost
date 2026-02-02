@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useCampaignCartStore } from '../../stores/campaignCart';
+import CampaignLaunchModal from './CampaignLaunchModal.vue';
 
 const cartStore = useCampaignCartStore();
 const isOpen = ref(false);
+const isLaunchModalOpen = ref(false);
+
+const openLaunchModal = () => {
+    isLaunchModalOpen.value = true;
+    isOpen.value = false;
+};
 
 const formatNumber = (num: number) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -105,6 +112,7 @@ const formatNumber = (num: number) => {
             </div>
             
             <button 
+                @click="openLaunchModal"
                 :disabled="cartStore.totalChannels === 0"
                 class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-black transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-2"
             >
@@ -121,6 +129,8 @@ const formatNumber = (num: number) => {
         </div>
       </div>
     </Teleport>
+
+    <CampaignLaunchModal v-model="isLaunchModalOpen" />
   </div>
 </template>
 

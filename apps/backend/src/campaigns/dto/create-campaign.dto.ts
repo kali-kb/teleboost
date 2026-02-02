@@ -13,4 +13,7 @@ export class CreateCampaignDto {
     @IsEnum(CampaignStatus)
     @IsOptional()
     status?: CampaignStatus;
+
+    @IsOptional()
+    placements?: { channel_id: string; price: string }[];
 }
