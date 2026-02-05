@@ -69,6 +69,7 @@ export class TelegramService {
     trustScore: number;
     verified?: boolean;
     verificationMethod?: string;
+    avatarUrl?: string;
     audience?: {
       primaryCountry?: string;
       primaryCity?: string;

@@ -300,6 +300,18 @@ export class TelegramUpdate {
         const title = (chat as any).title || 'Channel';
         const username = (chat as any).username;
 
+        let avatarUrl = null;
+        if (username) {
+          avatarUrl = `https://t.me/i/userpic/320/${username}.jpg`;
+        } else if ((chat as any).photo) {
+          try {
+            const fileLink = await ctx.telegram.getFileLink((chat as any).photo.big_file_id);
+            avatarUrl = fileLink.href;
+          } catch (e) {
+            console.error('Failed to get file link:', e);
+          }
+        }
+
         console.log(`Entering wizard for channel ${chatShared.chat_id} with ownerId ${session?.ownerId}`);
 
         await ctx.reply(
@@ -312,6 +324,7 @@ export class TelegramUpdate {
           channelId: chatShared.chat_id,
           title: title,
           username: username || chatShared.chat_id.toString(),
+          avatarUrl: avatarUrl,
         });
       } catch (error) {
         console.error('Error fetching chat info:', error);

@@ -47,6 +47,7 @@ export class TelegramChannelsService {
         verified: channel.verified ?? false,
         verification_method: channel.verificationMethod,
         trust_score: channel.trustScore,
+        avatar_url: channel.avatarUrl,
       })
       .returning();
 
@@ -100,6 +101,7 @@ export class TelegramChannelsService {
       verified: 'verified',
       verificationMethod: 'verification_method',
       trustScore: 'trust_score',
+      avatarUrl: 'avatar_url',
     };
 
     const updateData: any = {};

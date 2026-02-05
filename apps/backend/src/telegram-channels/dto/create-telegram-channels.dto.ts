@@ -69,6 +69,10 @@ export class CreateTelegramChannelsDto {
   @IsNumber()
   trustScore: number;
 
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
+
   @ValidateNested()
   @Type(() => CreateChannelAudienceDto)
   @IsOptional()

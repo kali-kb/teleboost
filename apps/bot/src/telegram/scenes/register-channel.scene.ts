@@ -447,6 +447,7 @@ export class RegisterChannelWizard {
         avgViews: state.avg_views,
         pricePerPost: state.price_per_post,
         trustScore: state.trust_score,
+        avatarUrl: state.avatarUrl,
         verified: false,
         verificationMethod: 'bot',
         audience: {

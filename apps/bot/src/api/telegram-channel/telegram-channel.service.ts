@@ -22,6 +22,7 @@ export interface CreateTelegramChannelDto {
   verified?: boolean;
   verificationMethod?: string;
   trustScore: number;
+  avatarUrl?: string;
   audience?: CreateChannelAudienceDto;
 }
 
@@ -38,6 +39,7 @@ export interface TelegramChannel {
   verified: boolean;
   verification_method: string;
   trust_score: number;
+  avatar_url: string;
   created_at: Date;
   updated_at: Date;
 }

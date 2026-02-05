@@ -25,6 +25,7 @@ export const telegram_channels = pgTable('telegram_channel', {
   verified: boolean('verified'),
   verification_method: text('verification_method'),
   trust_score: integer('trust_score'),
+  avatar_url: text('avatar_url'),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at')
     .defaultNow()
