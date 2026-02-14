@@ -300,7 +300,7 @@ export class TelegramUpdate {
         const title = (chat as any).title || 'Channel';
         const username = (chat as any).username;
 
-        let avatarUrl = null;
+        let avatarUrl: string | null = null;
         if (username) {
           avatarUrl = `https://t.me/i/userpic/320/${username}.jpg`;
         } else if ((chat as any).photo) {

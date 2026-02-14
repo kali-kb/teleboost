@@ -34,6 +34,8 @@ const wallet = ref({
   recentTransactions: [] as any[]
 });
 
+const dashboardData = ref<any>(null);
+
 onMounted(async () => {
   try {
     const { data: sessionData } = await authClient.getSession();
@@ -42,57 +44,45 @@ onMounted(async () => {
       user.value.email = sessionData.user.email;
       user.value.avatar = sessionData.user.image || null;
 
-      // fetch advertiser details
-      const profileResponse = await fetch("http://localhost:3001/api/advertiser/profile", {
+      // Fetch aggregated dashboard data
+      const dashboardResponse = await fetch("http://localhost:3001/api/dashboard", {
         credentials: 'include'
       });
-      const profile = await profileResponse.json();
-      if (profile && !profile.error && profile.exists !== false) {
-        user.value.type = profile.type;
-        user.value.company = profile.company_name || '';
-      }
-
-      // Fetch wallet data
-      const walletResponse = await fetch("http://localhost:3001/api/wallets/my-wallet", {
-        credentials: 'include'
-      });
-      const walletData = await walletResponse.json();
+      const data = await dashboardResponse.json();
       
-      if (walletData && !walletData.error) {
-        wallet.value.balance = parseFloat(walletData.balance);
-        wallet.value.locked = parseFloat(walletData.locked_balance);
-        wallet.value.currency = walletData.currency;
-
-        // Fetch transactions
-        const txResponse = await fetch(`http://localhost:3001/api/wallets/${walletData.id}/transactions`, {
-          credentials: 'include'
-        });
-        const transactions = await txResponse.json();
-        if (Array.isArray(transactions)) {
-          wallet.value.recentTransactions = transactions.map(tx => ({
+      if (data && !data.error) {
+        dashboardData.value = data;
+        
+        // Update user profile status
+        user.value.type = sessionData.user.type || 'INDIVIDUAL';
+        
+        // Map wallet data
+        if (data.wallet) {
+          wallet.value.balance = data.wallet.balance;
+          wallet.value.locked = data.wallet.locked_balance;
+          wallet.value.recentTransactions = data.recentTransactions.map((tx: any) => ({
             id: tx.id,
             type: tx.reference_type || 'transaction',
             amount: tx.type === 'CREDIT' ? parseFloat(tx.amount) : -parseFloat(tx.amount),
             date: new Date(tx.created_at).toLocaleDateString(),
-            status: 'completed' // transactions in DB are completed if they exist for now
+            status: 'completed'
           }));
+        }
+
+        // Map campaigns data
+        if (data.recentCampaigns) {
+          campaigns.value = data.recentCampaigns;
         }
       }
     }
   } catch (err) {
-    console.error("Failed to load user data:", err);
+    console.error("Failed to load dashboard data:", err);
   } finally {
     isLoadingUser.value = false;
   }
 });
 
-// Mock campaigns data
-const campaigns = ref([
-  { id: '1', name: 'Winter Sale Campaign', status: 'ACTIVE', budget: 5000, spent: 2340, impressions: 45200, placements: 12, created: '2024-12-20' },
-  { id: '2', name: 'New Year Promo', status: 'DRAFT', budget: 3000, spent: 0, impressions: 0, placements: 0, created: '2024-12-28' },
-  { id: '3', name: 'Brand Awareness Q4', status: 'COMPLETED', budget: 8000, spent: 7850, impressions: 156000, placements: 25, created: '2024-11-15' },
-  { id: '4', name: 'Product Launch', status: 'PAUSED', budget: 4500, spent: 1200, impressions: 23000, placements: 8, created: '2024-12-10' },
-]);
+const campaigns = ref<any[]>([]);
 
 const navItems = [
   { id: 'home', label: 'Dashboard', icon: 'dashboard' },
@@ -207,6 +197,7 @@ const setPage = (page: typeof currentPage.value) => {
           :user="user"
           :wallet="wallet"
           :campaigns="campaigns"
+          :dashboardStats="dashboardData?.campaignsSummary"
           @setPage="setPage"
         />
       </div>

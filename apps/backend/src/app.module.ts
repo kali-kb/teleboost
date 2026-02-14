@@ -19,6 +19,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { BankAccountModule } from './bank-accounts/bank-account.module';
 import { WithdrawalModule } from './withdrawals/withdrawal.module';
 import { PaymentsModule } from './payments/payments.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PaymentsModule } from './payments/payments.module';
     BankAccountModule,
     WithdrawalModule,
     PaymentsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

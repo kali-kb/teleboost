@@ -6,15 +6,16 @@ const props = defineProps<{
   user: any;
   wallet: any;
   campaigns: any[];
+  dashboardStats: any;
 }>();
 
 const emit = defineEmits(['setPage']);
 
-const dashboardStats = computed(() => ({
-  totalCampaigns: props.campaigns.length,
-  activeCampaigns: props.campaigns.filter(c => c.status === 'ACTIVE').length,
-  totalSpent: props.campaigns.reduce((sum, c) => sum + c.spent, 0),
-  totalImpressions: props.campaigns.reduce((sum, c) => sum + c.impressions, 0),
+const stats = computed(() => ({
+  totalCampaigns: props.dashboardStats?.total || props.campaigns.length,
+  activeCampaigns: props.dashboardStats?.active || props.campaigns.filter(c => c.status === 'ACTIVE').length,
+  totalSpent: props.campaigns.reduce((sum, c) => sum + (parseFloat(c.spent) || 0), 0),
+  totalImpressions: props.campaigns.reduce((sum, c) => sum + (parseInt(c.impressions) || 0), 0),
 }));
 </script>
 
@@ -38,9 +39,9 @@ const dashboardStats = computed(() => ({
           <div class="size-12 bg-blue-50 rounded-xl flex items-center justify-center">
             <span class="material-symbols-outlined text-blue-600 text-2xl">campaign</span>
           </div>
-          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">{{ dashboardStats.activeCampaigns }} Active</span>
+          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">{{ stats.activeCampaigns }} Active</span>
         </div>
-        <p class="text-2xl font-black text-slate-900">{{ dashboardStats.totalCampaigns }}</p>
+        <p class="text-2xl font-black text-slate-900">{{ stats.totalCampaigns }}</p>
         <p class="text-sm text-slate-500 mt-1">Total Campaigns</p>
       </div>
 
@@ -50,7 +51,7 @@ const dashboardStats = computed(() => ({
             <span class="material-symbols-outlined text-purple-600 text-2xl">payments</span>
           </div>
         </div>
-        <p class="text-2xl font-black text-slate-900">{{ formatCurrency(dashboardStats.totalSpent) }}</p>
+        <p class="text-2xl font-black text-slate-900">{{ formatCurrency(stats.totalSpent) }}</p>
         <p class="text-sm text-slate-500 mt-1">Total Spent</p>
       </div>
 
@@ -60,7 +61,7 @@ const dashboardStats = computed(() => ({
             <span class="material-symbols-outlined text-amber-600 text-2xl">visibility</span>
           </div>
         </div>
-        <p class="text-2xl font-black text-slate-900">{{ formatNumber(dashboardStats.totalImpressions) }}</p>
+        <p class="text-2xl font-black text-slate-900">{{ formatNumber(stats.totalImpressions) }}</p>
         <p class="text-sm text-slate-500 mt-1">Total Impressions</p>
       </div>
     </div>
@@ -74,19 +75,19 @@ const dashboardStats = computed(() => ({
           <button @click="emit('setPage', 'campaigns')" class="text-sm text-primary font-medium hover:underline">View All</button>
         </div>
         <div class="divide-y divide-slate-100">
-          <div v-for="campaign in campaigns.slice(0, 4)" :key="campaign.id" class="px-6 py-4 hover:bg-slate-50 transition-colors">
+          <div v-if="campaigns.length === 0" class="px-6 py-8 text-center text-slate-400">
+            <p class="text-sm font-medium">No campaigns yet</p>
+          </div>
+          <div v-else v-for="campaign in campaigns.slice(0, 4)" :key="campaign.id" class="px-6 py-4 hover:bg-slate-50 transition-colors">
             <div class="flex items-center justify-between mb-2">
-              <h4 class="font-medium text-slate-900">{{ campaign.name }}</h4>
+              <h4 class="font-medium text-slate-900 truncate max-w-[200px]">{{ campaign.marketing_copy }}</h4>
               <span :class="getStatusColor(campaign.status)" class="text-xs font-bold px-2 py-1 rounded-full">{{ campaign.status }}</span>
             </div>
-            <div class="flex items-center gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-4 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>ID: {{ campaign.id.split('-')[0] }}</span>
               <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">payments</span>
-                {{ formatCurrency(campaign.spent) }} / {{ formatCurrency(campaign.budget) }}
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">visibility</span>
-                {{ formatNumber(campaign.impressions) }}
+                <span class="material-symbols-outlined text-[14px]">layers</span>
+                {{ campaign.placements?.length || 0 }} Placements
               </span>
             </div>
           </div>

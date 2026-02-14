@@ -25,7 +25,7 @@ export class TelegramIdentityService {
   constructor(private readonly configService: ConfigService) {
     const baseURL =
       this.configService.get<string>('API_URL') ||
-      'http://localhost:3001';
+      'http://localhost:3001/api';
 
     this.client = axios.create({
       baseURL,

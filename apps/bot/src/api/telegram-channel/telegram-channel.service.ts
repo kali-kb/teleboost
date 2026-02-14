@@ -51,8 +51,8 @@ export class TelegramChannelService {
 
   constructor(private readonly configService: ConfigService) {
     const baseURL =
-      this.configService.get<string>('BACKEND_API_URL') ||
-      'http://localhost:3001';
+      this.configService.get<string>('API_URL') ||
+      'http://localhost:3001/api';
 
     this.client = axios.create({
       baseURL,
